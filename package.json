@@ -1,0 +1,52 @@
+{
+  "name": "flipr",
+  "version": "0.0.0",
+  "description": "Feature flipping and configuration using yaml files",
+  "main": "lib/flipr.js",
+  "scripts": {
+    "jshint": "jshint lib test",
+    "debug": "mocha --debug-brk",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha",
+    "report": "istanbul report cobertura",
+    "test": "npm run-script jshint && npm run-script cover && npm run-script report",
+    "benchmark": "node ./benchmark/percent.js && node ./benchmark/list.js && node ./benchmark/equal.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.secureserver.net:PC/node-flipr.git"
+  },
+  "keywords": [
+    "feature",
+    "ab",
+    "flags",
+    "configuration",
+    "config",
+    "flip",
+    "flipping"
+  ],
+  "author": {
+    "name": "Grant Shively",
+    "email": "gshively@godaddy.com"
+  },
+  "homepage": "https://github.com/godaddy/node-flipr",
+  "bugs": "https://github.com/godaddy/node-flipr/issues",
+  "license": "MIT",
+  "devDependencies": {
+    "benchmark": "^1.0.0",
+    "chai": "^1.9.1",
+    "istanbul": "^0.2.16",
+    "jshint": "^2.5.2",
+    "mocha": "^1.20.1",
+    "mocha-istanbul": "^0.2.0",
+    "proxyquire": "^1.0.1",
+    "reggie": "^0.2.1",
+    "sinon": "^1.10.2",
+    "sinon-chai": "^2.5.0"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "js-yaml": "^3.1.0",
+    "lodash": "^2.4.1",
+    "object-path": "^0.6.0"
+  }
+}

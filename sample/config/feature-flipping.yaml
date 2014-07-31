@@ -1,0 +1,65 @@
+--- 
+
+#This config showcases different ways to alter config values based
+#on user properties.
+
+#This config item uses the percent rule. Typically, you want to
+#choose some id that is unique per user, which will then
+#be converted to a percentage by flipr.  That percentage will
+#dictate what value is returned.
+printMoneyFeature:
+  description: >
+    This feature allows our users to print money.
+    The values are the dollar amounts they are allowed
+    to print.
+  values:
+      #percent values must add up to 100
+    - value: 10
+      percent: 60
+    - value: 50
+      percent: 20
+    - value: 100
+      percent: 19
+    - value: 1000000
+      percent: 1
+
+#This config item uses the list (userIds) and equality (isUserSpecial) rules.
+#If a userId is found in the userIds list, that value will be returned.
+#The isUserSpecial is driven by the rule's input function, which will
+#return a boolean that determines whether or not a user is special.
+welcomeMessage:
+  description: >
+    This message shows to users when they launch our application.
+  values:
+    - value: Hello Employee.
+      isUserSpecial: true
+    - value: Hello Customers.
+      userIds:
+        - 938902
+        - 38593
+        - 30048
+      notUsed: Ignore me
+    # This is the default value.
+    # Default values have no other modifiers
+    - value: Hello Everyone Else.
+
+#You can combine percent, userIds, and isUserSpecial
+#Rules are run in the order they are defined in options, so
+#whichever rule matches first will return the value.
+someOtherThing:
+  description: >
+    This is some other thing.  It's different than the other things.
+  values:
+    - value: Some value
+      percent: 50
+      isUserSpecial: true
+      userIds: 
+        - 30048
+        - 48398
+    - value: Other value
+      percent: 50
+      userIds:
+        - 298990
+        - 2tm
+        - 304992
+      notUsed: Ignore me

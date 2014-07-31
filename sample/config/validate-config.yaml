@@ -1,0 +1,76 @@
+--- 
+setting1:
+  description: >
+    This is a basic setting.
+  value: some value
+
+percentValidationExample:
+  description: >
+    This shows us validation rules for 'percent' type. Property
+    values must be numbers between 0 and 100 inclusive.  Also,
+    all the numbers must add up to 100 exactly.
+  values:
+      #todo: all percent values must add up to 100
+    - value: 10
+      percent: 60
+    - value: 50
+      percent: 20
+    - value: 100
+      percent: 19
+    - value: 1000000
+      percent: 1
+    - value: asdf
+      percent: asdf #INVALID, remove this value to pass validation
+
+percentValidationExample2:
+  description: >
+    This shows us validation rules for 'percent' type, specifically
+    that if you use a 'percent' type property, the total of all percent
+    properties in values must add up to 100
+  values:
+    - value: 10
+      percent: 60
+    - value: 50
+      percent: 20 #INVALID, percent adds up to 80, bump this percent up to 40 to pass validation
+    - value: 100
+
+equalValidationExample:
+  description: >
+    This shows us validation rules for 'equal' type.  Property values can be
+    strings, numbers, or booleans, but cannot be undefined.
+  values:
+    - value: aaa
+      someFlag: true
+    - value: bbb
+      someFlag: 1
+    - value: ccc
+      someFlag: foo
+    - value: ddd
+      someFlag:   #INVALID, value cannot be undefined, remove to pass validation
+
+listValidationExample:
+  description: >
+    This shows us validation rules for 'list' type.  Values must be
+    an array.  Values inside the array can be strings, numbers, or booleans.
+    There must be at least one value.
+  values:
+    - value: aaa
+      userIds: 
+        - 30048 
+    - value: bbb
+      userIds:
+        - asdf
+        - 2tm
+    - value: ccc
+      userIds:
+        - true
+        - foo
+    - value: eee
+      userIds: #INVALID, property value must be an array
+    - value: fff
+      userIds:
+        - #INVALID, values in property cannot be undefined
+    - value: ddd
+      userIds:
+        - foo: bar #INVALID, values in property cannot be arrays or objects, remove to pass validation
+          hey: there

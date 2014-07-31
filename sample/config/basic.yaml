@@ -1,0 +1,26 @@
+--- # This is a basic key/value config file.
+secretServiceUrl:
+  description: >
+    This is a url to reach the super secret
+    service that does super secret things.
+  value: http://www.godaddy.com/secretservice
+
+someTimeout:
+  description: >
+    This is some timeout value.  Isn't it great?
+  value: 0
+
+someNestedConfig:
+  description: >
+    This shows how your config can be an object.
+  value:
+    favoriteNumbers:
+      - 7
+      - 11
+      - 13
+      - 42
+    address:
+      street: Washington Street
+      number: 1234
+      city: Gilbert
+      state: Arizona
