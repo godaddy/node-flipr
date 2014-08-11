@@ -18,3 +18,4 @@ node_modules
 *.sublime-project
 *.sublime-workspace
 sandbox.js
+.DS_Store

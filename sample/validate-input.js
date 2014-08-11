@@ -13,8 +13,7 @@ var util = require('util');
 var flipr = require('../lib/flipr');
 
 flipr.init({
-  folderPath: 'sample/config/',
-  fileName: 'feature-flipping.yaml',
+  source: require('./config/feature-flipping-source'),
   //inputValidator should always have 2 parameters (input and callback)
   //and it should always return either true or false to the callback.
   //error is also acceptable, but passing an error will make the

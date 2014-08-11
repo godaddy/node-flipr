@@ -65,16 +65,19 @@ describe('flipr', function(){
   describe('#init', function(){
     it('correctly initializes flipr and returns middleware', function(){
       sutProxy.flush = sinon.spy();
-      var options = {rules: ['somerule']};
-      var extendedOptions = {
+      var options = {
+        source: {},
+        rules: ['somerule']
+      };
+      var optionsWithDefaults = {
+        source: {},
         inputValidator: defaultInputValidatorMock,
         rules: ['somerule']
       };
       var result = sutProxy.init(options);
-      expect(sutProxy.flush).to.have.been.called;
       expect(lodashMock.map).to.have.been.calledWith(options.rules, validateRuleSyncMock);
-      expect(sutProxy.cachedOptions).to.deep.equal(extendedOptions);
-      expect(configReaderMock.init).to.have.been.calledWithMatch(extendedOptions);
+      expect(sutProxy.cachedOptions).to.deep.equal(optionsWithDefaults);
+      expect(configReaderMock.init).to.have.been.calledWithMatch(optionsWithDefaults);
       expect(result).to.equal(connectReqConfigMock);
     });
   });
@@ -150,11 +153,9 @@ describe('flipr', function(){
     });
   });
   describe('#flush', function(){
-    it('sets flipr.cachedDictionary to udnefined and calls configReader.flush', function(){
-      sutProxy.cachedDictionary = 'somedictionary';
-      sutProxy.flush('somecb');
-      expect(sutProxy.cachedDictionary).to.be.undefined;
-      expect(configReaderMock.flush).to.have.been.calledWith('somecb');
+    it('calls configReader.flush', function(){
+      sutProxy.flush();
+      expect(configReaderMock.flush).to.have.been.called;
     });
   });
   describe('#idToPercent', function(){
@@ -167,12 +168,6 @@ describe('flipr', function(){
       sutProxy.cachedOptions.inputValidator = sinon.spy();
       sutProxy.validateInput('someinput', 'somecb');
       expect(sutProxy.cachedOptions.inputValidator).to.have.been.calledWith('someinput', 'somecb');
-    });
-  });
-  describe('#static', function(){
-    it('returns flipr.cachedDictionary', function(){
-      sutProxy.cachedDictionary = 'blah';
-      expect(sutProxy.static()).to.equal('blah');
     });
   });
 });

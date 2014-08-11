@@ -3,8 +3,7 @@
 var flipr = require('../lib/flipr');
 
 flipr.init({
-  folderPath: 'sample/config/',
-  fileName: 'feature-flipping.yaml',
+  source: require('./config/feature-flipping-source'),
   rules: [
     {
       type: 'equal',

@@ -3,8 +3,7 @@
 var flipr = require('../lib/flipr');
 
 flipr.init({
-  folderPath: 'sample/config/',
-  fileName: 'basic.yaml'
+  source: require('./config/basic-source')
 });
 
 flipr(function(err, config){
