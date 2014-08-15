@@ -5,6 +5,10 @@ Feature flipping and configuration using yaml files.
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 
+[![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr) [![NPM version](https://badge.fury.io/js/flipr.png)](http://badge.fury.io/js/flipr) [![Dependency Status](https://gemnasium.com/godaddy/node-flipr.png)](https://gemnasium.com/godaddy/node-flipr) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/godaddy/node-flipr/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
+[![NPM](https://nodei.co/npm/flipr.png?downloads=true&stars=true)](https://www.npmjs.org/package/flipr)
+
 ## How does it work?
 ###Here's the simplest example:
 ```yaml
