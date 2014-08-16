@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.secureserver.net:PC/node-flipr.git"
+    "url": "git@github.com:godaddy/node-flipr.git"
   },
   "keywords": [
     "feature",
