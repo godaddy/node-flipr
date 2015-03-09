@@ -13,6 +13,7 @@ var sutProxy;
 var asyncMock;
 var lodashMock;
 var fsMock;
+var globMock;
 var endWaterfallMock;
 var jsYamlMock;
 
@@ -22,11 +23,13 @@ describe('yaml-reader', function(){
     lodashMock = mockLodash();
     endWaterfallMock = sinon.stub().returns('endWaterfall');
     fsMock = mockFs();
+    globMock = mockGlob();
     jsYamlMock = mockJsYaml();
     var SutProxy = proxyquire(sutPath, {
       'async': asyncMock,
       'lodash': lodashMock,
       './util/end-waterfall': endWaterfallMock,
+      'glob': globMock,
       'fs': fsMock,
       'js-yaml': jsYamlMock
     });
@@ -110,7 +113,7 @@ describe('yaml-reader', function(){
       expect(asyncMock.waterfall).to.be.calledWithMatch([
         sutProxy.options.fileName,
         sutProxy.getFileAbsolutePath,
-        sutProxy.readFile,
+        sutProxy.readFiles,
         sutProxy.parseYamlToJsObject
       ],'somecb');
     });
@@ -121,7 +124,7 @@ describe('yaml-reader', function(){
       sutProxy.getConfigByFileName('somecb');
       expect(asyncMock.waterfall).to.be.calledWithMatch([
         sutProxy.getFileAbsolutePath,
-        sutProxy.readFile,
+        sutProxy.readFiles,
         sutProxy.parseYamlToJsObject
       ],'somecb');
       expect(lodashMock.partial).to.be.calledWith(sutProxy.getFileAbsolutePath, sutProxy.options.fileName);
@@ -135,9 +138,9 @@ describe('yaml-reader', function(){
         sutProxy.getFileAbsolutePath,
         sutProxy.readFileSafe,
         sutProxy.parseYamlToJsObjectAndEndIfFound,
-        sutProxy.getFileNameForCurrentEnvironment,
-        sutProxy.getFileAbsolutePath,
-        sutProxy.readFile,
+        sutProxy.getSearchPathForCurrentEnvironment,
+        sutProxy.findFileAbsolutePaths,
+        sutProxy.readFiles,
         sutProxy.parseYamlToJsObject
       ],'endWaterfall');
       expect(lodashMock.partial).to.be.calledWith(sutProxy.getFileAbsolutePath, sutProxy.options.envLocalFileName);
@@ -147,24 +150,24 @@ describe('yaml-reader', function(){
   describe('#getFileNameForCurrentEnvironment', function(){
     it('returns error if environmentVariable is not in environmentFileNameMap', function(){
       process.env.NODE_ENV = 'blah';
-      sutProxy.getFileNameForCurrentEnvironment(function(err){
+      sutProxy.getSearchPathForCurrentEnvironment(function(err){
         expect(err).to.be.instanceOf(Error);
       });
     });
     it('returns error if environmentVariable is not set', function(){
       process.env.NODE_ENV = null;
-      sutProxy.getFileNameForCurrentEnvironment(function(err){
+      sutProxy.getSearchPathForCurrentEnvironment(function(err){
         expect(err).to.be.instanceOf(Error);
       });
     });
     it('returns error if environmentVariable does not exist', function(){
       delete process.env.NODE_ENV;
-      sutProxy.getFileNameForCurrentEnvironment(function(err){
+      sutProxy.getSearchPathForCurrentEnvironment(function(err){
         expect(err).to.be.instanceOf(Error);
       });
     });
     it('returns fileNameFormat formatted with fileName from environment map', function(){
-      sutProxy.getFileNameForCurrentEnvironment(function(err, fileName){
+      sutProxy.getSearchPathForCurrentEnvironment(function(err, fileName){
         expect(fileName).to.equal('test.yaml');
       });
     });
@@ -176,35 +179,50 @@ describe('yaml-reader', function(){
       });
     });
   });
-  describe('#readFile', function(){
+  describe('#findFileAbsolutePaths', function(){
+    it('returns absolute paths based on cwd and options.folderPath', function(){
+      sutProxy.findFileAbsolutePaths('some-*.yaml', function(err, fileAbsolutePaths){
+        expect(globMock).to.be.calledWithMatch(path.resolve('lib/config', 'some-*.yaml'));
+        expect(fileAbsolutePaths).to.deep.equal(['some-*.yaml']);
+      });
+    });
+  });
+  describe('#readFiles', function(){
     it('passes error to cb', function(){
       fsMock.readFile = function(filePath, options, cb){cb(new Error());};
-      sutProxy.readFile('somepath', function(err){
+      sutProxy.readFiles('somepath', function(err){
         expect(err).to.be.instanceOf(Error);
       });
     });
-    it('calls fs.readFile with correct parameters', function(){
-      sutProxy.readFile('somepath', function(err, result){
-        expect(result).to.equal('somedata');
+    it('calls fs.readFile with correct parameters - single path', function(){
+      sutProxy.readFiles('somepath', function(err, result){
+        expect(result).to.deep.equal(['somedata']);
         expect(fsMock.readFile).to.be.calledWith('somepath', {encoding:'utf-8'}, sinon.match.func);
+      });
+    });
+    it('calls fs.readFile with correct parameters - multiple paths', function(){
+      sutProxy.readFiles(['somepath1', 'somepath2'], function(err, result){
+        expect(result).to.deep.equal(['somedata', 'somedata']);
+        expect(fsMock.readFile).to.be.calledWith('somepath1', {encoding:'utf-8'}, sinon.match.func);
+        expect(fsMock.readFile).to.be.calledWith('somepath2', {encoding:'utf-8'}, sinon.match.func);
       });
     });
   });
   describe('#readFileSafe', function(){
     it('does not pass error to cb', function(){
-      sutProxy.readFile = function(filePath, cb){cb(new Error());};
+      sutProxy.readFiles = function(filePath, cb){cb(new Error());};
       sutProxy.readFileSafe('somepath', function(err, result){
         expect(err).to.be.null;
         expect(result).to.be.null;
       });
     });
     it('calls readFile with correct parameters', function(){
-      sutProxy.readFile = sinon.spy(function(filePath, cb) {
+      sutProxy.readFiles = sinon.spy(function(filePath, cb) {
         cb(null, 'somedata2');
       });
       sutProxy.readFileSafe('somepath', function(err, result){
         expect(result).to.equal('somedata2');
-        expect(sutProxy.readFile).to.be.calledWith('somepath', sinon.match.func);
+        expect(sutProxy.readFiles).to.be.calledWith('somepath', sinon.match.func);
       });
     });
   });
@@ -215,9 +233,14 @@ describe('yaml-reader', function(){
         expect(err).to.be.instanceOf(Error);
       });
     });
-    it('passes parsed yaml to cb', function(){
+    it('passes parsed yaml to cb - single value', function(){
       sutProxy.parseYamlToJsObject('test', function(err, result){
-        expect(result).to.equal('yamlstring');
+        expect(result).to.deep.equal({ yaml: 'string' });
+      });
+    });
+    it('passes parsed yaml to cb - single value', function(){
+      sutProxy.parseYamlToJsObject(['test'], function(err, result){
+        expect(result).to.deep.equal({ yaml: 'string' });
       });
     });
   });
@@ -249,7 +272,7 @@ describe('yaml-reader', function(){
     });
     it('passes parsed yaml to cb', function(){
       sutProxy.parseYamlToJsObjectAndEndIfFound('test', function(err, result){
-        expect(result).to.equal('yamlstring');
+        expect(result).to.deep.equal({ yaml: 'string'});
       });
     });
   });
@@ -275,8 +298,12 @@ function mockFs() {
   };
 }
 
+function mockGlob() {
+  return sinon.stub().returnsArg(0);
+}
+
 function mockJsYaml() {
   return {
-    safeLoad: sinon.stub().returns('yamlstring')
+    safeLoad: sinon.stub().returns({ yaml: 'string'})
   };
 }
