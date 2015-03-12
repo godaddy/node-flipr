@@ -18,6 +18,7 @@ var defaultInputValidatorMock;
 var continueIfValidMock;
 var idToPercentMock;
 var connectReqConfigMock;
+var validateRuleMock;
 
 describe('flipr', function(){
   beforeEach(function(){
@@ -30,6 +31,7 @@ describe('flipr', function(){
     continueIfValidMock = 'continueIfValid';
     idToPercentMock = 'idToPercent';
     connectReqConfigMock = 'connectReqConfig';
+    validateRuleMock = 'validateRuleMock';
     sutProxy = proxyquire(sutPath, {
       'async': asyncMock,
       'lodash': lodashMock,
@@ -39,7 +41,8 @@ describe('flipr', function(){
       './validate/default-input-validator': defaultInputValidatorMock,
       './util/continue-if-valid': continueIfValidMock,
       './util/id-to-percent': idToPercentMock,
-      './middleware/connect-req-config': connectReqConfigMock
+      './middleware/connect-req-config': connectReqConfigMock,
+      './validate/validate-rule': validateRuleMock
     });
   });
   describe('exported function', function(){
@@ -170,11 +173,18 @@ describe('flipr', function(){
       expect(sutProxy.cachedOptions.inputValidator).to.have.been.calledWith('someinput', 'somecb');
     });
   });
+  describe('#validateRules', function(){
+    it('maps rules to validateRule', function(){
+      sutProxy.validateRules('rules', 'somecb');
+      expect(asyncMock.map).to.have.been.calledWith('rules', validateRuleMock, 'somecb');
+    });
+  });
 });
 
 function mockAsync(){
   return {
-    waterfall: sinon.spy()
+    waterfall: sinon.spy(),
+    map: sinon.spy()
   };
 }
 

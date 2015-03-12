@@ -1,7 +1,11 @@
 node-flipr
 ============
 
+**Stability: 1 - Experimental** 
+
 Feature flipping and configuration using a flipr source (e.g. yaml files, etcd, database, etc.)
+
+For v0, see [this branch](https://github.com/godaddy/node-flipr/tree/v0).
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 

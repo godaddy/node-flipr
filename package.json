@@ -1,19 +1,22 @@
 {
   "name": "flipr",
   "version": "1.0.0",
-  "description": "Feature flipping and configuration using yaml files",
+  "description": "Feature flipping and configuration using yaml files, etcd, or other flipr sources",
   "main": "lib/flipr.js",
   "scripts": {
-    "jshint": "jshint lib test",
-    "debug": "mocha --debug-brk",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha",
-    "report": "istanbul report cobertura",
-    "test": "npm run-script jshint && npm run-script cover && npm run-script report",
-    "benchmark": "node ./benchmark/percent.js && node ./benchmark/list.js && node ./benchmark/equal.js"
+    "_cover": "istanbul cover --root lib --include-all-sources --report text-summary _mocha",
+    "benchmark": "node ./benchmark/percent.js && node ./benchmark/list.js && node ./benchmark/equal.js",
+    "check-coverage": "istanbul check-coverage --statements 100 --functions 100 --branches 100 --lines 100",
+    "lint": "jshint .",
+    "open-coverage": "open ./coverage/index.html",
+    "report": "istanbul report html && istanbul report text-summary",
+    "test-debug": "mocha --debug-brk",
+    "test": "npm run lint && npm run unit && npm run report && (npm run check-coverage || npm run open-coverage)",
+    "unit": "npm run _cover -- --dir coverage/unit -- --recursive test"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.secureserver.net:PC/node-flipr.git"
+    "url": "git@github.com:godaddy/node-flipr.git"
   },
   "keywords": [
     "feature",
@@ -33,18 +36,18 @@
   "license": "MIT",
   "devDependencies": {
     "benchmark": "^1.0.0",
-    "chai": "^1.9.1",
-    "istanbul": "^0.2.16",
-    "jshint": "^2.5.2",
-    "mocha": "^1.20.1",
+    "chai": "^2.1.1",
+    "istanbul": "^0.3.7",
+    "jshint": "^2.6.3",
+    "mocha": "^2.2.1",
     "mocha-istanbul": "^0.2.0",
-    "proxyquire": "^1.0.1",
-    "sinon": "^1.10.2",
-    "sinon-chai": "^2.5.0"
+    "proxyquire": "^1.4.0",
+    "sinon": "^1.13.0",
+    "sinon-chai": "^2.7.0"
   },
   "dependencies": {
     "async": "^0.9.0",
-    "lodash": "^2.4.1",
-    "object-path": "^0.6.0"
+    "lodash": "^3.5.0",
+    "object-path": "^0.9.0"
   }
 }
