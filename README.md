@@ -104,7 +104,8 @@ module.exports = {
 * `validateConfig`: Flipr provides some robust validation for its config data via the flipr-validation package.  If your flipr source is reading from a static resource, like yaml files, you'll want to expose validateConfig on the source so that users can validate the config in their unit tests.  If your flipr source is reading from a dynamic resource, like etcd or a database, you'll want to use flipr-validation in the process that adds data to that resource, so that bad config doesn't get sent over to flipr.
 
 ### Available flipr sources
-TODO Add sources here
+* [flipr-yaml](https://github.com/godaddy/node-flipr-yaml): This source will act much like flipr v0 did, reading configuration from yaml files.
+* [flipr-etcd](https://github.com/godaddy/node-flipr-etcd): This source will read configuration from [Etcd](https://github.com/coreos/etcd).  You should use this source if you want truly dynamic configuration.  Flipr will listen to Etcd and immediately pick up any changes.  Think about feature flags.  You turn a flag on, your application immediately responds to the change.  If you were using flipr-yaml, you would have to change the yaml file and re-deploy your application.
 
 ## Would you like to know [more](http://i.imgur.com/IOvYPfT.jpg)?
 * [Basic example](/sample/basic.js)
