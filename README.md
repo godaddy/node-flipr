@@ -7,8 +7,6 @@ Feature flipping and configuration using a flipr source (e.g. yaml files, etcd, 
 
 For v0, see [this branch](https://github.com/godaddy/node-flipr/tree/v0).
 
-**Heads Up** There is a big refactor on the way for 1.0.0.  Flipr will support multiple sources - YAML and etcd to start.  The new etcd source will allow you to change configuration on the fly, instead of requiring you to update yaml config files and deploy your application.  The yaml source will function the same as flipr does now, with a slightly different setup process.  1.0.0 should be here Soon™.
-
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 
 [![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr) [![NPM version](https://badge.fury.io/js/flipr.png)](http://badge.fury.io/js/flipr) [![Dependency Status](https://gemnasium.com/godaddy/node-flipr.png)](https://gemnasium.com/godaddy/node-flipr) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/godaddy/node-flipr/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![Chat with us!](https://badges.gitter.im/godaddy/node-flipr.png)](https://gitter.im/godaddy/node-flipr)
