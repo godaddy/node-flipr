@@ -14,7 +14,7 @@ For v0, see [this branch](https://github.com/godaddy/node-flipr/tree/v0).
 [![NPM](https://nodei.co/npm/flipr.png?downloads=true&stars=true)](https://www.npmjs.org/package/flipr)
 
 ## How does it work?
-###Here's the simplest example using a yaml source:
+### Here's the simplest example using a yaml source:
 ```yaml
 ---
 # Here's a basic YAML config file. Assume it is loaded by the source.
@@ -34,7 +34,7 @@ flipr(function(err, config){
   console.dir(config);
 });
 ```
-###Here's a more complex example using a yaml source:
+### Here's a more complex example using a yaml source:
 ```yaml
 ---
 someConfigKey:
@@ -184,10 +184,10 @@ var rule = {
 ```
 The above example is a little contrived, but it shows how you can use input functions to calculate a complex set of criteria to power your config.  The `input` property is calculating a user's seniority and age, which is then represented in your config by a friendly identifier specified in `property`.
 
-###Input as a function
+### Input as a function
 The Equal rule example located above shows you that you can define a funtion to transform the input sent to flipr to create some complex rules.  If you decide to use functions for a rule's input, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.  You can use flipr's [input validation functionality](/sample/validate-input.js) to help catch edge cases that would cause any exceptions in your input functions.
 
-##Other Noteworthy Behavior
+## Other Noteworthy Behavior
 * Flipr deals with two different types of configuration data: static and dynamic.  Static configuration is created using the `value:` property, while dyanmic is created using the `values:` property.  Static configuration doesn't change based on input, so the rules you define are ignored, and it is cached after the first read.  Dynamic configuration does change based on input and is not cached.  Each time you pass input to flipr, it will run through the rules you have defined to determine the correct values.  While this is not an expensive operation, it would be a good idea to limit the number of calls to flipr when getting dynamic configuration, especially if you have a large config.
 * Values from input are compared to values in config by making them both strings and using a case-insensitive comparison.
   * You can force case sensitivity by setting the 'isCaseSensitive' property on the rule to true.
