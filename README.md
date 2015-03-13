@@ -1,21 +1,23 @@
 node-flipr
 ============
 
-Feature flipping and configuration using yaml files.
+**Stability: 1 - Experimental** 
 
-**Heads Up** There is a big refactor on the way for 1.0.0.  Flipr will support multiple sources - YAML and etcd to start.  The new etcd source will allow you to change configuration on the fly, instead of requiring you to update yaml config files and deploy your application.  The yaml source will function the same as flipr does now, with a slightly different setup process.  1.0.0 should be here Soon™.
+Feature flipping and configuration using a flipr source (e.g. yaml files, etcd, database, etc.)
+
+For v0, see [this branch](https://github.com/godaddy/node-flipr/tree/v0).
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 
-[![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr) [![NPM version](https://badge.fury.io/js/flipr.png)](http://badge.fury.io/js/flipr) [![Dependency Status](https://gemnasium.com/godaddy/node-flipr.png)](https://gemnasium.com/godaddy/node-flipr) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/godaddy/node-flipr/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr) [![NPM version](https://badge.fury.io/js/flipr.png)](http://badge.fury.io/js/flipr) [![Dependency Status](https://gemnasium.com/godaddy/node-flipr.png)](https://gemnasium.com/godaddy/node-flipr) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/godaddy/node-flipr/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![Chat with us!](https://badges.gitter.im/godaddy/node-flipr.png)](https://gitter.im/godaddy/node-flipr)
 
 [![NPM](https://nodei.co/npm/flipr.png?downloads=true&stars=true)](https://www.npmjs.org/package/flipr)
 
 ## How does it work?
-###Here's the simplest example:
+### Here's the simplest example using a yaml source:
 ```yaml
 ---
-# Here's a basic YAML config file. Assume it exists at config/simple.yaml
+# Here's a basic YAML config file. Assume it is loaded by the source.
 someConfigKey:
   description: >
     This is some config key that has some value.
@@ -23,16 +25,16 @@ someConfigKey:
 ```
 
 ```javascript
+var yamlSource = require('./my-yaml-source');
 var flipr = require('flipr');
 flipr.init({
-  folderPath: 'config/',
-  fileName: 'simple.yaml'
+  source: yamlSource
 });
 flipr(function(err, config){
   console.dir(config);
 });
 ```
-###Here's a more complex example:
+### Here's a more complex example using a yaml source:
 ```yaml
 ---
 someConfigKey:
@@ -51,10 +53,10 @@ someConfigKey:
 ```
 
 ```javascript
+var yamlSource = require('./my-yaml-source');
 var flipr = require('flipr');
 flipr.init({
-  folderPath: 'config/',
-  fileName: 'complex.yaml',
+  source: yamlSource
   rules: [
     {
       type: 'equal',
@@ -86,6 +88,25 @@ flipr(input, function(err, config){
 
 ```
 
+## What is a flipr source?
+Good question.  A flipr source is something that gives flipr configuration data using a specific format, over a specific interface.  The format can be seen in the examples above.  Where does it get the data?  It's up to you.  There are some pre-built sources for flipr (see below), but you can easily create your own.  A flipr source should expose the following interface:
+```javascript
+module.exports = {
+  getConfig: function(cb){ }, //required
+  preload: function(cb){ }, //optional, but recommended
+  flush: function(){ } //optional, but recommended
+  validateConfig: function(options, cb){ } //optional
+}
+```
+* `getConfig`: This method should pass the config as a JS object to the callback.  Callback signature is `function(err, result)`.  This action should cache the config.
+* `preload`: This should load the config data and cache it.  This gives users the option to load the config during a warmup process.  Should call the callback when finished, passing an error if something went wrong.
+* `flush`: This should flush all cached config data, so that the next call will grab it from the original source.  Flush doesn't have to be a synchronous action, but if it isn't, be aware that there may still be calls after the flush that are grabbing the old config.
+* `validateConfig`: Flipr provides some robust validation for its config data via the flipr-validation package.  If your flipr source is reading from a static resource, like yaml files, you'll want to expose validateConfig on the source so that users can validate the config in their unit tests.  If your flipr source is reading from a dynamic resource, like etcd or a database, you'll want to use flipr-validation in the process that adds data to that resource, so that bad config doesn't get sent over to flipr.
+
+### Available flipr sources
+* [flipr-yaml](https://github.com/godaddy/node-flipr-yaml): This source will act much like flipr v0 did, reading configuration from yaml files.
+* [flipr-etcd](https://github.com/godaddy/node-flipr-etcd): This source will read configuration from [Etcd](https://github.com/coreos/etcd).  You should use this source if you want truly dynamic configuration.  Flipr will listen to Etcd and immediately pick up any changes.  Think about feature flags.  You turn a flag on, your application immediately responds to the change.  If you were using flipr-yaml, you would have to change the yaml file and re-deploy your application.
+
 ## Would you like to know [more](http://i.imgur.com/IOvYPfT.jpg)?
 * [Basic example](/sample/basic.js)
 * [Feature flipping](/sample/feature-flipping.js)
@@ -94,36 +115,15 @@ flipr(input, function(err, config){
 * [Integrating with express/connect via middleware](/sample/connect-middleware.js)
 * [Validating input to flipr](/sample/validate-input.js)
 * [Validating config files](/sample/validate-config.js)
-* [Forcing a preload/cache of YAML file](/sample/preload.js)
+* [Forcing a preload/cache](/sample/preload.js)
 * [Get a single static value](/sample/get-value.js)
 * [Get a single dynamic value](/sample/get-value-by-rules.js)
 * [Flushing cached config](/sample/flush-cache.js)
 
-## Flipr Options
-* `folderPath` (string): The folder path containing the configuration files.  It should be a *relative* path to the CWD of your application process (`process.cwd()`).  In most cases, this would be the root of your repo.
-  * Defaults to `'lib/config/'`
-* `fileName` (string): The name of the file in `folderPath` to use for configuration.  If specified, it will override all environment-based options.
-* `envVariable` (string): The name of the environment variable that stores a string identifying the host's environment.
-  * Defaults to `'NODE_ENV'`
-* `envFileNameMap` (object): A key/value object used to map values from `envVariable` to `envFileNameFormat` placeholders.  See [this sample](/sample/environment-awareness.js) for more details.
-  * Default
-
-```javascript
-{
-  dev: 'dev',
-  development: 'development',
-  test: 'test',
-  staging: 'staging',
-  master: 'prod',
-  prod: 'prod',
-  prodution: 'production'
-}
-```
-* `envFileNameFormat` (string): The util.format string for your environment-based configuration files.  It should contain a single format placeholder (`%s`), which will be replaced by the value selected from `envFileNameMap`.
-  * Defaults to `'%s.yaml'`
-* `envLocalFileName` (string): Name of the file that is used to conditionally override the environment-based config file.  If this file exists, flipr will use it instead of the one for the current environment.  Useful for overriding configuration locally.  Typically you would add this file to your .gitignore.
-  * Defaults to `'local.yaml'`
-* `inputValidator` (function(input, cb)): Flipr uses inputValidator to test the validity of the input it receives before it tries to use that input to retrieve config based on the rules you've defined.  If you're using the connect middleware, the inputValidator decides whether to retrieve the dyanmic or static configuration, based on the validity of the input.  If you're calling flipr.getDictionaryByRules explicity, then an error will be returned in the case of invalid input.  Check out [this example](/sample/validate-input.js);
+## Flipr Init Options
+* `source` - _required_ - The source you want to use to retrieve config information.  Sources have their own init options, see their readme's for usage details.
+* `inputValidator` - _optional_ - (function(input, cb)) - Flipr uses inputValidator to test the validity of the input it receives before it tries to use that input to retrieve config based on the rules you've defined.  If you're using the connect middleware, the inputValidator decides whether to retrieve the dyanmic or static configuration, based on the validity of the input.  If you're calling flipr.getDictionaryByRules explicity, then an error will be returned in the case of invalid input.  Check out [this example](/sample/validate-input.js);
+* `rules` - _optional_ - array - The rules you want to use to drive your feature flipping and other dynamic configuration.  See below for more explanation.
 
 ## Flipr Rules
 
@@ -184,14 +184,13 @@ var rule = {
 ```
 The above example is a little contrived, but it shows how you can use input functions to calculate a complex set of criteria to power your config.  The `input` property is calculating a user's seniority and age, which is then represented in your config by a friendly identifier specified in `property`.
 
-###Input as a function
+### Input as a function
 The Equal rule example located above shows you that you can define a funtion to transform the input sent to flipr to create some complex rules.  If you decide to use functions for a rule's input, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.  You can use flipr's [input validation functionality](/sample/validate-input.js) to help catch edge cases that would cause any exceptions in your input functions.
 
-##Other Noteworthy Behavior
-* Flipr deals with two different types of configuration data: static and dynamic.  Static configuration is created using the `value:` property in your YAML files, while dyanmic is created using the `values:` property.  Static configuration doesn't change based on input, so the rules you define are ignored, and it is cached after the first read.  Dynamic configuration does change based on input and is not cached.  Each time you pass input to flipr, it will run through the rules you have defined to determine the correct values.  While this is not an expensive operation, it would be a good idea to limit the number of calls to flipr when getting dynamic configuration, especially if you have a large YAML file.
+## Other Noteworthy Behavior
+* Flipr deals with two different types of configuration data: static and dynamic.  Static configuration is created using the `value:` property, while dyanmic is created using the `values:` property.  Static configuration doesn't change based on input, so the rules you define are ignored, and it is cached after the first read.  Dynamic configuration does change based on input and is not cached.  Each time you pass input to flipr, it will run through the rules you have defined to determine the correct values.  While this is not an expensive operation, it would be a good idea to limit the number of calls to flipr when getting dynamic configuration, especially if you have a large config.
 * Values from input are compared to values in config by making them both strings and using a case-insensitive comparison.
   * You can force case sensitivity by setting the 'isCaseSensitive' property on the rule to true.
-* Flipr has the ability to validate your config, based on the rules you've defined.  You should do this in your unit tests, to ensure that bad config changes don't make it past the test phase of your build.
 * Rules are executed in the order they are defined in the rules option.  If a match is found for a rule, it will skip the remaining rules and return the matched value.
-* The YAML file is cached after it has been read once.  If you edit the YAML file after it ha been cached, flipr will not see the changes until you explicitly call flipr.flush().
-* Accessing config via flipr is an asynchornous action.
+* Generally, flipr sources should be caching any data they retrieve to build the config.  Once it's cached, you'll need to explicitly call flush on flipr to get any updated values (unless the source implements some sort of automatic flushing).
+* Accessing config via flipr is treated as an asynchornous action, even if the source is synchronous.

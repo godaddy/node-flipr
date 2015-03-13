@@ -28,47 +28,32 @@ suite
   .add('flipr#equalx1', function(deferred){
     if(!x1Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'equal.yaml',
+        source: require('./equal-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x1Setup = true;
-        callFlipr(input, deferred);
-      });
+      x1Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer: true})
   .add('flipr#equalx10', function(deferred){
     if(!x10Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'equal-x-10.yaml',
+        source: require('./equal-x-10-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x10Setup = true;
-        callFlipr(input, deferred);
-      });
+      x10Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer:true})
   .add('flipr#equalx20', function(deferred){
     if(!x20Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'equal-x-20.yaml',
+        source: require('./equal-x-20-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x20Setup = true;
-        callFlipr(input, deferred);
-      });
+      x20Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer:true})
   .on('start', function(){
     console.log('Starting equal benchmarks...');

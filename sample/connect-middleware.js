@@ -14,8 +14,7 @@ module.exports = function(app) {
   //You can use app.all if you want to have
   //this middleware run after all use/param middleware.
   app.use(flipr.init({
-    folderPath: 'sample/config/',
-    fileName: 'feature-flipping.yaml',
+    source: require('./config/feature-flipping-source'),
     //Moving the rules into a seprate file will help keep
     //things more organized, while allowing you to reference
     //the rules in other areas of your application 

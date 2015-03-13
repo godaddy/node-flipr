@@ -18,6 +18,7 @@ var defaultInputValidatorMock;
 var continueIfValidMock;
 var idToPercentMock;
 var connectReqConfigMock;
+var validateRuleMock;
 
 describe('flipr', function(){
   beforeEach(function(){
@@ -30,6 +31,7 @@ describe('flipr', function(){
     continueIfValidMock = 'continueIfValid';
     idToPercentMock = 'idToPercent';
     connectReqConfigMock = 'connectReqConfig';
+    validateRuleMock = 'validateRuleMock';
     sutProxy = proxyquire(sutPath, {
       'async': asyncMock,
       'lodash': lodashMock,
@@ -39,7 +41,8 @@ describe('flipr', function(){
       './validate/default-input-validator': defaultInputValidatorMock,
       './util/continue-if-valid': continueIfValidMock,
       './util/id-to-percent': idToPercentMock,
-      './middleware/connect-req-config': connectReqConfigMock
+      './middleware/connect-req-config': connectReqConfigMock,
+      './validate/validate-rule': validateRuleMock
     });
   });
   describe('exported function', function(){
@@ -65,44 +68,25 @@ describe('flipr', function(){
   describe('#init', function(){
     it('correctly initializes flipr and returns middleware', function(){
       sutProxy.flush = sinon.spy();
-      var options = {rules: ['somerule']};
-      var extendedOptions = {
+      var options = {
+        source: {},
+        rules: ['somerule']
+      };
+      var optionsWithDefaults = {
+        source: {},
         inputValidator: defaultInputValidatorMock,
         rules: ['somerule']
       };
       var result = sutProxy.init(options);
-      expect(sutProxy.flush).to.have.been.called;
       expect(lodashMock.map).to.have.been.calledWith(options.rules, validateRuleSyncMock);
-      expect(sutProxy.cachedOptions).to.deep.equal(extendedOptions);
-      expect(configReaderMock.init).to.have.been.calledWithMatch(extendedOptions);
+      expect(sutProxy.cachedOptions).to.deep.equal(optionsWithDefaults);
+      expect(configReaderMock.init).to.have.been.calledWithMatch(optionsWithDefaults);
       expect(result).to.equal(connectReqConfigMock);
     });
   });
   describe('#getDictionary', function(){
-    it('calls async.waterfall with configReader.getDictionary, then caches result and passes it on to callback', function(){
-      sutProxy.getDictionary('somecb');
-      expect(asyncMock.waterfall).to.have.been.calledWith([
-        configReaderMock.getDictionary,
-        sinon.match.func
-      ], 'somecb');
-      var cacheAndPassOn = asyncMock.waterfall.args[0][0][1];
-      cacheAndPassOn('somedictionary', function(err, dictionary){
-        expect(dictionary).to.equal('somedictionary');
-        expect(sutProxy.cachedDictionary).to.equal('somedictionary');
-      });
-    });
-    it('does not cache dictionary if it is already cached', function(){
-      sutProxy.cachedDictionary = 'cacheddictionary';
-      sutProxy.getDictionary('somecb');
-      expect(asyncMock.waterfall).to.have.been.calledWith([
-        configReaderMock.getDictionary,
-        sinon.match.func
-      ], 'somecb');
-      var cacheAndPassOn = asyncMock.waterfall.args[0][0][1];
-      cacheAndPassOn('somedictionary', function(err, dictionary){
-        expect(dictionary).to.equal('somedictionary');
-        expect(sutProxy.cachedDictionary).to.equal('cacheddictionary');
-      });
+    it('calls configReader.getDictionary', function(){
+      expect(sutProxy.getDictionary).to.equal(configReaderMock.getDictionary);
     });
   });
   describe('#getDictionaryByRules', function(){
@@ -150,11 +134,9 @@ describe('flipr', function(){
     });
   });
   describe('#flush', function(){
-    it('sets flipr.cachedDictionary to udnefined and calls configReader.flush', function(){
-      sutProxy.cachedDictionary = 'somedictionary';
-      sutProxy.flush('somecb');
-      expect(sutProxy.cachedDictionary).to.be.undefined;
-      expect(configReaderMock.flush).to.have.been.calledWith('somecb');
+    it('calls configReader.flush', function(){
+      sutProxy.flush();
+      expect(configReaderMock.flush).to.have.been.called;
     });
   });
   describe('#idToPercent', function(){
@@ -169,17 +151,18 @@ describe('flipr', function(){
       expect(sutProxy.cachedOptions.inputValidator).to.have.been.calledWith('someinput', 'somecb');
     });
   });
-  describe('#static', function(){
-    it('returns flipr.cachedDictionary', function(){
-      sutProxy.cachedDictionary = 'blah';
-      expect(sutProxy.static()).to.equal('blah');
+  describe('#validateRules', function(){
+    it('maps rules to validateRule', function(){
+      sutProxy.validateRules('rules', 'somecb');
+      expect(asyncMock.map).to.have.been.calledWith('rules', validateRuleMock, 'somecb');
     });
   });
 });
 
 function mockAsync(){
   return {
-    waterfall: sinon.spy()
+    waterfall: sinon.spy(),
+    map: sinon.spy()
   };
 }
 

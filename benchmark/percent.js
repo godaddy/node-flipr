@@ -25,47 +25,32 @@ suite
   .add('flipr#percentx1', function(deferred){
     if(!x1Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'percent.yaml',
+        source: require('./percent-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x1Setup = true;
-        callFlipr(input, deferred);
-      });
+      x1Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer: true})
   .add('flipr#percentx10', function(deferred){
     if(!x10Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'percent-x-10.yaml',
+        source: require('./percent-x-10-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x10Setup = true;
-        callFlipr(input, deferred);
-      });
-    }
-    else
-      callFlipr(input, deferred);
+      x10Setup = true;   
+    }   
+    callFlipr(input, deferred);
   }, {defer:true})
   .add('flipr#percentx20', function(deferred){
     if(!x20Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'percent-x-20.yaml',
+        source: require('./percent-x-20-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x20Setup = true;
-        callFlipr(input, deferred);
-      });
+      x20Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer:true})
   .on('start', function(){
     console.log('Starting percent benchmarks...');

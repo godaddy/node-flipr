@@ -26,47 +26,32 @@ suite
   .add('flipr#listx1', function(deferred){
     if(!x1Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'list.yaml',
+        source: require('./list-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x1Setup = true;
-        callFlipr(input, deferred);
-      });
+      x1Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer: true})
   .add('flipr#listx10', function(deferred){
     if(!x10Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'list-x-10.yaml',
+        source: require('./list-x-10-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x10Setup = true;
-        callFlipr(input, deferred);
-      });
+      x10Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer:true})
   .add('flipr#listx20', function(deferred){
     if(!x20Setup) {
       flipr.init({
-        folderPath: 'benchmark/',
-        fileName: 'list-x-20.yaml',
+        source: require('./list-x-20-source'),
         rules: rules
       });
-      flipr.preload(function(){
-        x20Setup = true;
-        callFlipr(input, deferred);
-      });
+      x20Setup = true;
     }
-    else
-      callFlipr(input, deferred);
+    callFlipr(input, deferred);
   }, {defer:true})
   .on('start', function(){
     console.log('Starting list benchmarks...');

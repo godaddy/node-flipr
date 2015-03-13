@@ -3,14 +3,9 @@
 var flipr = require('../lib/flipr');
 
 flipr.init({
-  folderPath: 'sample/config/',
-  fileName: 'basic.yaml'
+  source: require('./config/flushable-source'),
 });
 
-flipr.preload(function(){
-  console.log('Config file has been read and cached.  Any changes to the .yaml file will not be read by flipr.');
+flipr.flush();
 
-  flipr.flush();
-
-  console.log('Cache has been flushed. The next call to flipr will result in the file being read and cached again.');
-});
+console.log('All cached/memoized values have been flushed. The next call to flipr will get a fresh config from the source (assuming the flush is a synchronous action in the source).');

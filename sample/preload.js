@@ -3,10 +3,9 @@
 var flipr = require('../lib/flipr');
 
 flipr.init({
-  folderPath: 'sample/config/',
-  fileName: 'basic.yaml'
+  source: require('./config/preload-source')
 });
 
 flipr.preload(function(){
-  console.log('Config file is loaded and cached!');
+  console.log('Config has been loaded and cached!');
 });

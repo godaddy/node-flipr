@@ -3,8 +3,7 @@
 var flipr = require('../lib/flipr');
 
 flipr.init({
-  folderPath: 'sample/config/',
-  fileName: 'feature-flipping.yaml',
+  source: require('./config/feature-flipping-source'),
   //rules execute in the order they are defined.
   //if a match is found by a rule,
   //the rest of the rules will be ignored for
