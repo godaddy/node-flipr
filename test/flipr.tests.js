@@ -85,30 +85,8 @@ describe('flipr', function(){
     });
   });
   describe('#getDictionary', function(){
-    it('calls async.waterfall with configReader.getDictionary, then caches result and passes it on to callback', function(){
-      sutProxy.getDictionary('somecb');
-      expect(asyncMock.waterfall).to.have.been.calledWith([
-        configReaderMock.getDictionary,
-        sinon.match.func
-      ], 'somecb');
-      var cacheAndPassOn = asyncMock.waterfall.args[0][0][1];
-      cacheAndPassOn('somedictionary', function(err, dictionary){
-        expect(dictionary).to.equal('somedictionary');
-        expect(sutProxy.cachedDictionary).to.equal('somedictionary');
-      });
-    });
-    it('does not cache dictionary if it is already cached', function(){
-      sutProxy.cachedDictionary = 'cacheddictionary';
-      sutProxy.getDictionary('somecb');
-      expect(asyncMock.waterfall).to.have.been.calledWith([
-        configReaderMock.getDictionary,
-        sinon.match.func
-      ], 'somecb');
-      var cacheAndPassOn = asyncMock.waterfall.args[0][0][1];
-      cacheAndPassOn('somedictionary', function(err, dictionary){
-        expect(dictionary).to.equal('somedictionary');
-        expect(sutProxy.cachedDictionary).to.equal('cacheddictionary');
-      });
+    it('calls configReader.getDictionary', function(){
+      expect(sutProxy.getDictionary).to.equal(configReaderMock.getDictionary);
     });
   });
   describe('#getDictionaryByRules', function(){

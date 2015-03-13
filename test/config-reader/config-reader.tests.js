@@ -66,6 +66,26 @@ describe('config-reader', function(){
       sutProxy.preload('somecb');
       expect(optionsMock.source.preload).to.have.been.calledWith('somecb');
     });
+    it('subscribes to flush event if it is available', function(){
+      sutProxy.init(optionsMock);
+      expect(optionsMock.source.on).to.have.been.calledWith(optionsMock.source.events.flush, sinon.match.func);
+    });
+    it('does not subscribe to flush event if it is not available', function(){
+      delete optionsMock.source.events.flush;
+      sutProxy.init(optionsMock);
+      expect(optionsMock.source.on).to.not.have.been.called;
+    });
+    it('does not subscribe to flush event if source has no events', function(){
+      delete optionsMock.source.events;
+      sutProxy.init(optionsMock);
+      expect(optionsMock.source.on).to.not.have.been.called;
+    });
+    it('does not subscribe to flush event if souce is not an eventemitter', function(){
+      optionsMock.source.on = 'not a func anymore';
+      expect(function(){
+        sutProxy.init(optionsMock);
+      }).to.not.throw;
+    });
   });
   describe('#preload', function(){
     it('will not preload source if source does not have a preload function', function(){
@@ -180,7 +200,14 @@ function mockOptions() {
     source: {
       flush: sinon.spy(),
       preload: sinon.spy(),
-      getConfig: 'getConfig'
+      getConfig: 'getConfig',
+      events: {
+        beforeChange: 'before-change',
+        flush: 'flush',
+        afterChange: 'after-change',
+        error: 'error'
+      },
+      on: sinon.spy()
     }
   };
 }
