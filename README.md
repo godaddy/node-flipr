@@ -1,6 +1,10 @@
 node-flipr
 ============
 
+[![NPM](https://nodei.co/npm/flipr.png?downloads=true&stars=true)](https://www.npmjs.org/package/flipr)
+
+[![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr)
+
 **Stability: 1 - Experimental** 
 
 Feature flipping and configuration using a flipr source (e.g. yaml files, etcd, database, etc.)
@@ -8,10 +12,6 @@ Feature flipping and configuration using a flipr source (e.g. yaml files, etcd, 
 For v0, see [this branch](https://github.com/godaddy/node-flipr/tree/v0).
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
-
-[![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr) [![NPM version](https://badge.fury.io/js/flipr.png)](http://badge.fury.io/js/flipr) [![Dependency Status](https://gemnasium.com/godaddy/node-flipr.png)](https://gemnasium.com/godaddy/node-flipr) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/godaddy/node-flipr/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![Chat with us!](https://badges.gitter.im/godaddy/node-flipr.png)](https://gitter.im/godaddy/node-flipr)
-
-[![NPM](https://nodei.co/npm/flipr.png?downloads=true&stars=true)](https://www.npmjs.org/package/flipr)
 
 ## How does it work?
 ### Here's the simplest example using a yaml source:
