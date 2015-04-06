@@ -83,9 +83,11 @@ var input = {
   }
 };
 flipr(input, function(err, config){
-    console.dir(config);
+  console.dir(config);
 });
-
+flipr(input, 'someConfigKey', function(err, value){
+  console.log(value);
+});
 ```
 
 ## What is a flipr source?
