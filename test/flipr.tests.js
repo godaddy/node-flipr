@@ -51,18 +51,26 @@ describe('flipr', function(){
         sutProxy('somereq', 'notfunc');
       }).to.throw(Error);
     });
-    it('calls getDictionary if no req', function(){
+    it('calls getDictionary if no input', function(){
       sutProxy.getDictionary = sinon.spy();
       var cb = function someCallback(){};
       sutProxy(cb);
       expect(sutProxy.getDictionary).to.have.been.calledWith(cb);
     });
-    it('calls getDictionaryByRules if req', function(){
+    it('calls getDictionaryByRules if input', function(){
       sutProxy.getDictionaryByRules = sinon.spy();
-      var req = 'somereq';
+      var input = 'someinput';
       var cb = function someCallback(){};
-      sutProxy(req, cb);
-      expect(sutProxy.getDictionaryByRules).to.have.been.calledWith(req, cb);
+      sutProxy(input, cb);
+      expect(sutProxy.getDictionaryByRules).to.have.been.calledWith(input, cb);
+    });
+    it('calls getValueByRules if input and key', function(){
+      sutProxy.getValueByRules = sinon.spy();
+      var input = 'someinput';
+      var key = 'somekey';
+      var cb = function someCallback(){};
+      sutProxy(input, key, cb);
+      expect(sutProxy.getValueByRules).to.have.been.calledWith(input, key, cb);
     });
   });
   describe('#init', function(){

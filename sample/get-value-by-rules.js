@@ -32,3 +32,10 @@ flipr.getValueByRules(input, 'welcomeMessage', function(err, value){
     return void console.log(err);
   console.dir(value);
 });
+
+//Shorter notation
+flipr(input, 'welcomeMessage', function(err, value){
+  if(err)
+    return void console.log(err);
+  console.dir(value);
+});
