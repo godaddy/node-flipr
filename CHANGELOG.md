@@ -24,6 +24,7 @@
 - `getDynamicValue` and `getDynamicConfig` will only ever return config items that have `values`
 - Removed memoization of getValue and getConfig, just relying on source caching now
 - Only support node v10+
+- Flipr sources must now support async/await
 - Dropped support for the existing flipr-etcd source, that will need a rewrite.
 
 ## v1.1.0 (April 6, 2015)
