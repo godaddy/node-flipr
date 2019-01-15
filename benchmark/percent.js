@@ -1,72 +1,64 @@
-'use strict';
+const Benchmark = require('benchmark');
+const suite = new Benchmark.Suite();
+const Flipr = require('../lib/flipr');
 
-var Benchmark = require('benchmark');
-var suite = new Benchmark.Suite();
-var flipr = require('../lib/flipr');
-
-var input = {
+const input = {
   user: {
     userId: '1234'
   }
 };
-var rules = [{
+const rules = [{
   type: 'percent',
   input: 'user.userId'
 }];
 
-//We need these setup flags because benchmark.js doesn't
-//have an async setup method for benchmarks, and we don't
-//want to setup each time we run the test.
-var x1Setup = false;
-var x10Setup = false;
-var x20Setup = false;
-
 suite
-  .add('flipr#percentx1', function(deferred){
-    if(!x1Setup) {
-      flipr.init({
-        source: require('./percent-source'),
-        rules: rules
-      });
-      x1Setup = true;
-    }
-    callFlipr(input, deferred);
+  .add('flipr#percentx1', (deferred) => {
+    const flipr = new Flipr({
+      source: require('./percent-source'),
+      rules: rules,
+    });
+    flipr.getDynamicConfig(input).then(
+      () => deferred.resolve(),
+      err => {
+        console.dir(err);
+        deferred.resolve();
+      },
+    );
   }, {defer: true})
-  .add('flipr#percentx10', function(deferred){
-    if(!x10Setup) {
-      flipr.init({
-        source: require('./percent-x-10-source'),
-        rules: rules
-      });
-      x10Setup = true;   
-    }   
-    callFlipr(input, deferred);
+  .add('flipr#percentx10', (deferred) => {
+    const flipr = new Flipr({
+      source: require('./percent-x-10-source'),
+      rules: rules,
+    });
+    flipr.getDynamicConfig(input).then(
+      () => deferred.resolve(),
+      err => {
+        console.dir(err);
+        deferred.resolve();
+      },
+    );
   }, {defer:true})
-  .add('flipr#percentx20', function(deferred){
-    if(!x20Setup) {
-      flipr.init({
-        source: require('./percent-x-20-source'),
-        rules: rules
-      });
-      x20Setup = true;
-    }
-    callFlipr(input, deferred);
+  .add('flipr#percentx20', (deferred) => {
+    const flipr = new Flipr({
+      source: require('./percent-x-20-source'),
+      rules: rules,
+    });
+    flipr.getDynamicConfig(input).then(
+      () => deferred.resolve(),
+      err => {
+        console.dir(err);
+        deferred.resolve();
+      },
+    );
   }, {defer:true})
-  .on('start', function(){
+  .on('start', () => { 
     console.log('Starting percent benchmarks...');
   })
-  .on('cycle', function(event){
+  .on('cycle', (event) => {
     console.log(String(event.target));
   })
-  .on('complete', function(){
+  .on('complete', () => { 
     console.log('Finished percent benchmarks.');
   })
   .run({'async':true});
-
-function callFlipr(input, deferred) {
-  flipr(input, function(err){
-    if(err)
-      console.dir(err);
-    deferred.resolve();
-  });
-}

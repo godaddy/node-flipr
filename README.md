@@ -5,11 +5,7 @@ node-flipr
 
 [![Build Status](https://travis-ci.org/godaddy/node-flipr.png)](https://travis-ci.org/godaddy/node-flipr)
 
-**Stability: 1 - Experimental** 
-
 Feature flipping and configuration using a flipr source (e.g. yaml files, etcd, database, etc.)
-
-For v0, see [this branch](https://github.com/godaddy/node-flipr/tree/v0).
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 
@@ -25,14 +21,23 @@ someConfigKey:
 ```
 
 ```javascript
-var yamlSource = require('./my-yaml-source');
-var flipr = require('flipr');
-flipr.init({
-  source: yamlSource
+const Flipr = require('flipr');
+const FliprYaml = require('flipr-yaml');
+
+const source = new FliprYaml({
+  folderPath: './config',
+  fileName: 'example.yaml',
 });
-flipr(function(err, config){
-  console.dir(config);
+
+const flipr = new Flipr({
+  source,
 });
+
+flipr.getConfig()
+  .then(
+    config => console.log(config),
+    err => console.log(err),
+  );
 ```
 ### Here's a more complex example using a yaml source:
 ```yaml
@@ -53,10 +58,16 @@ someConfigKey:
 ```
 
 ```javascript
-var yamlSource = require('./my-yaml-source');
-var flipr = require('flipr');
-flipr.init({
-  source: yamlSource
+const Flipr = require('flipr');
+const FliprYaml = require('flipr-yaml');
+
+const source = new FliprYaml({
+  folderPath: './config',
+  fileName: 'example.yaml',
+});
+
+const flipr = new Flipr({
+  source: source,
   rules: [
     {
       type: 'equal',
@@ -75,29 +86,32 @@ flipr.init({
       input: 'user.userId',
     }
   ]
-})
+});
 
-var input = {
+const input = {
   user: {
     userId: '293890'
   }
 };
-flipr(input, function(err, config){
-  console.dir(config);
-});
-flipr(input, 'someConfigKey', function(err, value){
+
+async function complexExample() {
+  const config = await flipr.getDynamicConfig(input);
+  console.log(config);
+  const value = await flipr.getDynamicValue(input, 'someConfigKey');
   console.log(value);
-});
+}
+
+complexExample().catch();
 ```
 
 ## What is a flipr source?
-Good question.  A flipr source is something that gives flipr configuration data using a specific format, over a specific interface.  The format can be seen in the examples above.  Where does it get the data?  It's up to you.  There are some pre-built sources for flipr (see below), but you can easily create your own.  A flipr source should expose the following interface:
+A flipr source is something that gives flipr configuration data using a specific schema, over a specific interface.  The format can be seen in the examples above.  Where does it get the data?  It's up to you.  There are some pre-built sources for flipr (see below), but you can easily create your own.  A flipr source should expose the following interface:
 ```javascript
 module.exports = {
-  getConfig: function(cb){ }, //required
-  preload: function(cb){ }, //optional, but recommended
-  flush: function(){ } //optional, but recommended
-  validateConfig: function(options, cb){ } //optional
+  async getConfig() { }, //required
+  async preload() { }, //optional, but recommended
+  async flush() { } //optional, but recommended
+  async validateConfig(options) { } //optional
 }
 ```
 * `getConfig`: This method should pass the config as a JS object to the callback.  Callback signature is `function(err, result)`.  This action should cache the config.
@@ -107,30 +121,25 @@ module.exports = {
 
 ### Available flipr sources
 * [flipr-yaml](https://github.com/godaddy/node-flipr-yaml): This source will act much like flipr v0 did, reading configuration from yaml files.
-* [flipr-etcd](https://github.com/godaddy/node-flipr-etcd): This source will read configuration from [Etcd](https://github.com/coreos/etcd).  You should use this source if you want truly dynamic configuration.  Flipr will listen to Etcd and immediately pick up any changes.  Think about feature flags.  You turn a flag on, your application immediately responds to the change.  If you were using flipr-yaml, you would have to change the yaml file and re-deploy your application.
+* **OUT OF DATE** [flipr-etcd](https://github.com/godaddy/node-flipr-etcd): This source is out of date, but remains as an example. This source will read configuration from [Etcd](https://github.com/coreos/etcd).  You should use this source if you want truly dynamic configuration.  Flipr will listen to Etcd and immediately pick up any changes.  Think about feature flags.  You turn a flag on, your application immediately responds to the change.  If you were using flipr-yaml, you would have to change the yaml file and re-deploy your application.
 
 ## Would you like to know [more](http://i.imgur.com/IOvYPfT.jpg)?
 * [Basic example](/sample/basic.js)
 * [Feature flipping](/sample/feature-flipping.js)
 * [Using default values if rule match isn't found](/sample/default.js)
-* [Environment-aware configuration files](/sample/environment-awareness.js)
-* [Integrating with express/connect via middleware](/sample/connect-middleware.js)
-* [Validating input to flipr](/sample/validate-input.js)
-* [Validating config files](/sample/validate-config.js)
 * [Forcing a preload/cache](/sample/preload.js)
 * [Get a single static value](/sample/get-value.js)
-* [Get a single dynamic value](/sample/get-value-by-rules.js)
+* [Get a single dynamic value](/sample/get-dynamic-value.js)
 * [Flushing cached config](/sample/flush-cache.js)
 
-## Flipr Init Options
-* `source` - _required_ - The source you want to use to retrieve config information.  Sources have their own init options, see their readme's for usage details.
-* `inputValidator` - _optional_ - (function(input, cb)) - Flipr uses inputValidator to test the validity of the input it receives before it tries to use that input to retrieve config based on the rules you've defined.  If you're using the connect middleware, the inputValidator decides whether to retrieve the dyanmic or static configuration, based on the validity of the input.  If you're calling flipr.getDictionaryByRules explicity, then an error will be returned in the case of invalid input.  Check out [this example](/sample/validate-input.js);
-* `rules` - _optional_ - array - The rules you want to use to drive your feature flipping and other dynamic configuration.  See below for more explanation.
+## Flipr Constructor Options
+* `source` - _required_ - The source you want to use to retrieve config information.
+* `rules` - _optional_ - array - The rules you want to use to drive your feature flipping and other dynamic configuration.  See below for further explanation.
 
 ## Flipr Rules
 
 ### Percent
-The percent rule is used to change config values based on some percentage calculated using a unique identifier.  One common use for this rule is rolling out changes to an arbitrary percentage of users.  The example below shows how would you enable a feature for 15% of your users.
+The percent rule is used to change config values based on some percentage calculated using a unique identifier.  One common use for this rule is rolling out changes to an arbitrary percentage of users.  The example below shows how would you enable a feature for 15% of your users. Percents are cumulative, starting with the smallest percent and must add up to 100 for a single property, e.g. `1, 4, 95` would in reality be `0-1%, >1-5%, >5%-100%`.
 ```yaml
 isSomeFeatureEnabled:
   values:
@@ -140,7 +149,7 @@ isSomeFeatureEnabled:
       percent: 85
 ```
 ```javascript
-var rule = {
+const rule = {
   type: 'percent',
   input: 'user.id'
 };
@@ -158,7 +167,7 @@ isSomeFeatureEnabled:
     - value: false
 ```
 ```javascript
-var rule = {
+const rule = {
   type: 'list',
   input: 'user.state', //Input can be a nested property
   property: 'states'
@@ -166,7 +175,7 @@ var rule = {
 ```
 
 ### Equal
-The equal rule is much like the list rule, except it only allows a single value instead of a list of values.  One common use for this rule would be enabling features based on a single user characteristic that only has a limited number of states (e.g. boolean).  The example below shows you how you would enable a feature for any user that has been using your application for a many years, and is over the age of 18.  This example also debuts another feature of rules: the ability to accept a function in the input property.  Note:  All three rules let you do pass a function for input.
+The equal rule is much like the list rule, except it only allows a single value instead of a list of values.  One common use for this rule would be enabling features based on a single user characteristic that only has a limited number of states (e.g. boolean).  The example below shows you how you would enable a feature for any user that has been using your application for a number years, and is over the age of 18.  This example also shows another feature of rules: the ability to accept a function in the input property.  Note: All three rules let you pass a function for input.
 ```yaml
 isSomeFeatureEnabled:
   values:
@@ -175,24 +184,25 @@ isSomeFeatureEnabled:
     - value: false
 ```
 ```javascript
-var rule = {
+const someMinimumDate = new Date(2005, 1, 1);
+const rule = {
   type: 'list',
-  input: function(input) {
-    return input.user.startDate > new Date(2005, 1, 1) 
+  input: (input) => {
+    return input.user.startDate > someMinimumDate
       && input.user.age >= 18;
   },
   property: 'isAdmin'
 };
 ```
-The above example is a little contrived, but it shows how you can use input functions to calculate a complex set of criteria to power your config.  The `input` property is calculating a user's seniority and age, which is then represented in your config by a friendly identifier specified in `property`.
+The above example is contrived, but it shows how you can use input functions to calculate a complex set of criteria to power your config.  The `input` property is calculating a user's seniority and age, which is then represented in your config by a friendly identifier specified in `property`.
 
 ### Input as a function
-The Equal rule example located above shows you that you can define a funtion to transform the input sent to flipr to create some complex rules.  If you decide to use functions for a rule's input, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.  You can use flipr's [input validation functionality](/sample/validate-input.js) to help catch edge cases that would cause any exceptions in your input functions.
+You can define a function to transform the input sent to flipr to create some complex rules.  If you decide to use functions for a rule's input, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.
 
 ## Other Noteworthy Behavior
-* Flipr deals with two different types of configuration data: static and dynamic.  Static configuration is created using the `value:` property, while dyanmic is created using the `values:` property.  Static configuration doesn't change based on input, so the rules you define are ignored, and it is cached after the first read.  Dynamic configuration does change based on input and is not cached.  Each time you pass input to flipr, it will run through the rules you have defined to determine the correct values.  While this is not an expensive operation, it would be a good idea to limit the number of calls to flipr when getting dynamic configuration, especially if you have a large config.
+* Flipr deals with two different types of configuration data: static and dynamic.  Static configuration is created using the `value:` property, while dynamic is created using the `values:` property.  Static configuration doesn't change based on input, so the rules you define are ignored.  Dynamic configuration does change based on input.  Each time you pass input to flipr, it will run through the rules you have defined to determine the correct values.  While this is not an expensive operation, it would be a good idea to minimize the number of calls to flipr when getting dynamic configuration, especially if you have a large config.
 * Values from input are compared to values in config by making them both strings and using a case-insensitive comparison.
   * You can force case sensitivity by setting the 'isCaseSensitive' property on the rule to true.
 * Rules are executed in the order they are defined in the rules option.  If a match is found for a rule, it will skip the remaining rules and return the matched value.
 * Generally, flipr sources should be caching any data they retrieve to build the config.  Once it's cached, you'll need to explicitly call flush on flipr to get any updated values (unless the source implements some sort of automatic flushing).
-* Accessing config via flipr is treated as an asynchornous action, even if the source is synchronous.
+* Accessing config via flipr is treated as an asynchronous action, even if the source is synchronous.

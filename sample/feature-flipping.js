@@ -1,13 +1,12 @@
-'use strict';
+const Flipr = require('../lib/flipr');
+const source = require('./sources/feature-flipping-source');
 
-var flipr = require('../lib/flipr');
-
-flipr.init({
-  source: require('./config/feature-flipping-source'),
-  //rules execute in the order they are defined.
-  //if a match is found by a rule,
-  //the rest of the rules will be ignored for
-  //that config item.
+const flipr = new Flipr({
+  source,
+  // rules execute in the order they are defined.
+  // if a match is found by a rule,
+  // the rest of the rules will be ignored for
+  // that config item.
   rules: [
     {
       type: 'equal',
@@ -36,32 +35,34 @@ flipr.init({
   ]
 });
 
-var sampleInput1 = {
+const sampleInput1 = {
   user: {
     userId: '30048'
   }
 };
-var sampleInput2 = {
+const sampleInput2 = {
   user: {
     userId: '2tm'
   }
 };
 
-//This shows what % a user's id falls under
-//when calculating config values based on %
-console.log('sampleInput1.user.userId % ' + flipr.idToPercent(sampleInput1.user.userId));
-console.log('sampleInput2.user.userId % ' + flipr.idToPercent(sampleInput2.user.userId));
+// This shows what % a user's id falls under
+// when calculating config values based on %
+console.log(`sampleInput1.user.userId % ${Flipr.idToPercent(sampleInput1.user.userId)}`);
+console.log(`sampleInput2.user.userId % ${Flipr.idToPercent(sampleInput2.user.userId)}`);
 
-flipr(sampleInput1, function(err, config){
-  if(err)
-    return void console.dir(err);
-  console.log('Config for sampleInput1:');
-  console.dir(config);
-});
+async function featureFlippingExample() {
+  try {
+    const config1 = await flipr.getDynamicConfig(sampleInput1);
+    console.log('\nConfig for sampleInput1');
+    console.log(JSON.stringify(config1, null, 2));
 
-flipr(sampleInput2, function(err, config){
-  if(err)
-    return void console.dir(err);
-  console.log('Config for sampleInput2:');
-  console.dir(config);
-});
+    const config2 = await flipr.getDynamicConfig(sampleInput2);
+    console.log('\nConfig for sampleInput2');
+    console.log(JSON.stringify(config2, null, 2));
+  } catch (err) {
+    console.dir(err);
+  }
+}
+
+featureFlippingExample().catch()
