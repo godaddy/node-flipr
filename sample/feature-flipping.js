@@ -53,11 +53,11 @@ console.log(`sampleInput2.user.userId % ${Flipr.idToPercent(sampleInput2.user.us
 
 async function featureFlippingExample() {
   try {
-    const config1 = await flipr.getDynamicConfig(sampleInput1);
+    const config1 = await flipr.getConfig(sampleInput1);
     console.log('\nConfig for sampleInput1');
     console.log(JSON.stringify(config1, null, 2));
 
-    const config2 = await flipr.getDynamicConfig(sampleInput2);
+    const config2 = await flipr.getConfig(sampleInput2);
     console.log('\nConfig for sampleInput2');
     console.log(JSON.stringify(config2, null, 2));
   } catch (err) {

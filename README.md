@@ -95,9 +95,9 @@ const input = {
 };
 
 async function complexExample() {
-  const config = await flipr.getDynamicConfig(input);
+  const config = await flipr.getConfig(input);
   console.log(config);
-  const value = await flipr.getDynamicValue(input, 'someConfigKey');
+  const value = await flipr.getValue('someConfigKey', input);
   console.log(value);
 }
 

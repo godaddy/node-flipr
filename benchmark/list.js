@@ -19,7 +19,7 @@ suite
       source: require('./list-source'),
       rules: rules,
     });
-    flipr.getDynamicConfig(input).then(
+    flipr.getConfig(input).then(
       () => deferred.resolve(),
       err => {
         console.dir(err);
@@ -32,7 +32,7 @@ suite
       source: require('./list-x-10-source'),
       rules: rules,
     });
-    flipr.getDynamicConfig(input).then(
+    flipr.getConfig(input).then(
       () => deferred.resolve(),
       err => {
         console.dir(err);
@@ -45,7 +45,7 @@ suite
       source: require('./list-x-20-source'),
       rules: rules,
     });
-    flipr.getDynamicConfig(input).then(
+    flipr.getConfig(input).then(
       () => deferred.resolve(),
       err => {
         console.dir(err);

@@ -18,7 +18,7 @@ suite
       source: require('./percent-source'),
       rules: rules,
     });
-    flipr.getDynamicConfig(input).then(
+    flipr.getConfig(input).then(
       () => deferred.resolve(),
       err => {
         console.dir(err);
@@ -31,7 +31,7 @@ suite
       source: require('./percent-x-10-source'),
       rules: rules,
     });
-    flipr.getDynamicConfig(input).then(
+    flipr.getConfig(input).then(
       () => deferred.resolve(),
       err => {
         console.dir(err);
@@ -44,7 +44,7 @@ suite
       source: require('./percent-x-20-source'),
       rules: rules,
     });
-    flipr.getDynamicConfig(input).then(
+    flipr.getConfig(input).then(
       () => deferred.resolve(),
       err => {
         console.dir(err);

@@ -30,7 +30,7 @@ const input = {
 
 async function getValueByRulesExample() {
   try {
-    const value1 = await flipr.getDynamicValue(input, 'welcomeMessage');
+    const value1 = await flipr.getValue('welcomeMessage', input);
     console.log(value1);
   } catch (err) {
     console.dir(err);

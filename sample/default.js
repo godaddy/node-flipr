@@ -31,7 +31,7 @@ const input = {
 // In feature-flipping.yaml, welcomeMessage is set up with a default
 // value, which will be selected if the userId doesn't match the other
 // values.
-flipr.getDynamicValue(input, 'welcomeMessage')
+flipr.getValue('welcomeMessage', input)
   .then(
     value => console.log(value),
     err => console.dir(err),

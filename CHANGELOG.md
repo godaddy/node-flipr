@@ -1,4 +1,4 @@
-## v2.0.0 (January 16th, 2019)
+## v2.0.0 (January 17th, 2019)
 
 ### Features & Improvements
 
@@ -14,14 +14,12 @@
 - async/await replaces callbacks everywhere
 - Removed input validator
 - Removed connect middleware
-- Renamed `getDictionary` to `getConfig`
-- Renamed `getDictionaryByRules` to `getDynamicConfig`
-- Renamed `getValueByRules` to `getDynamicValue`
+- Renamed `getDictionary` and `getDictionaryByRules` to `getConfig`
+- Renamed `getValueByRules` to `getValue`
 - `preload` and `flush` are now `async`
 - `init` replaced with class constructor
 - Removed a lot of unnecessary function parameter validation
-- `getValue` and `getConfig` will only ever return config items that have `value`
-- `getDynamicValue` and `getDynamicConfig` will only ever return config items that have `values`
+- `getValue` and `getConfig` will return undefined for dynamic config keys if no input is given
 - Removed memoization of getValue and getConfig, just relying on source caching now
 - Only support node v10+
 - Flipr sources must now support async/await
