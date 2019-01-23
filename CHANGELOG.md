@@ -1,4 +1,4 @@
-## v2.0.0 (January 17th, 2019)
+## v2.0.0 (January 23th, 2019)
 
 ### Features & Improvements
 
@@ -16,7 +16,7 @@
 - Removed connect middleware
 - Renamed `getDictionary` and `getDictionaryByRules` to `getConfig`
 - Renamed `getValueByRules` to `getValue`
-- `preload` and `flush` are now `async`
+- `preload` and `flush` are now `async` and required on all sources
 - `init` replaced with class constructor
 - Removed a lot of unnecessary function parameter validation
 - `getValue` and `getConfig` will return undefined for dynamic config keys if no input is given

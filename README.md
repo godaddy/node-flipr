@@ -108,19 +108,19 @@ complexExample().catch();
 A flipr source is something that gives flipr configuration data using a specific schema, over a specific interface.  The format can be seen in the examples above.  Where does it get the data?  It's up to you.  There are some pre-built sources for flipr (see below), but you can easily create your own.  A flipr source should expose the following interface:
 ```javascript
 module.exports = {
-  async getConfig() { }, //required
-  async preload() { }, //optional, but recommended
-  async flush() { } //optional, but recommended
-  async validateConfig(options) { } //optional
-}
+  async getConfig() { },
+  async preload() { },
+  async flush() { },
+  async validateConfig(options) { },
+};
 ```
-* `getConfig`: This method should pass the config as a JS object to the callback.  Callback signature is `function(err, result)`.  This action should cache the config.
-* `preload`: This should load the config data and cache it.  This gives users the option to load the config during a warmup process.  Should call the callback when finished, passing an error if something went wrong.
-* `flush`: This should flush all cached config data, so that the next call will grab it from the original source.  Flush doesn't have to be a synchronous action, but if it isn't, be aware that there may still be calls after the flush that are grabbing the old config.
-* `validateConfig`: Flipr provides some robust validation for its config data via the flipr-validation package.  If your flipr source is reading from a static resource, like yaml files, you'll want to expose validateConfig on the source so that users can validate the config in their unit tests.  If your flipr source is reading from a dynamic resource, like etcd or a database, you'll want to use flipr-validation in the process that adds data to that resource, so that bad config doesn't get sent over to flipr.
+* `getConfig`: This method should return the config as a JS object. This action should cache the config for subsequent calls.
+* `preload`: This should load the config data and cache it.  This gives users the option to load the config during a warmup process.
+* `flush`: This should flush all cached config data, so that the next call will grab it from the original source.
+* `validateConfig`: Flipr provides some robust validation for its config data via the [flipr-validation library](https://github.com/godaddy/node-flipr-validation).  If the flipr source is reading from a static resource, like yaml files, you can use this to validate the config in your unit tests.  If the flipr source is reading from a dynamic resource, like etcd or a database, you'll want to use flipr-validation in the process that adds data to that resource, so that bad config doesn't get sent over to flipr.
 
 ### Available flipr sources
-* [flipr-yaml](https://github.com/godaddy/node-flipr-yaml): This source will act much like flipr v0 did, reading configuration from yaml files.
+* [flipr-yaml](https://github.com/godaddy/node-flipr-yaml): Read flipr configuration from yaml files.
 * **OUT OF DATE** [flipr-etcd](https://github.com/godaddy/node-flipr-etcd): This source is out of date, but remains as an example. This source will read configuration from [Etcd](https://github.com/coreos/etcd).  You should use this source if you want truly dynamic configuration.  Flipr will listen to Etcd and immediately pick up any changes.  Think about feature flags.  You turn a flag on, your application immediately responds to the change.  If you were using flipr-yaml, you would have to change the yaml file and re-deploy your application.
 
 ## Would you like to know [more](http://i.imgur.com/IOvYPfT.jpg)?
