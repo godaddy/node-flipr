@@ -21,7 +21,7 @@
 - Removed a lot of unnecessary function parameter validation
 - `getValue` and `getConfig` will return undefined for dynamic config keys if no input is given
 - Removed memoization of getValue and getConfig, just relying on source caching now
-- Only support node v10+
+- Drop support for node < v8.3
 - Flipr sources must now support async/await
 - Dropped support for the existing flipr-etcd source, that will need a rewrite.
 

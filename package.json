@@ -29,6 +29,9 @@
   "homepage": "https://github.com/godaddy/node-flipr",
   "bugs": "https://github.com/godaddy/node-flipr/issues",
   "license": "MIT",
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "devDependencies": {
     "benchmark": "^1.0.0",
     "eslint": "^5.12.0",
