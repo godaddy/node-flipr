@@ -25,8 +25,7 @@ const Flipr = require('flipr');
 const FliprYaml = require('flipr-yaml');
 
 const source = new FliprYaml({
-  folderPath: './config',
-  fileName: 'example.yaml',
+  filePath: './config/example.yaml',
 });
 
 const flipr = new Flipr({
@@ -62,8 +61,7 @@ const Flipr = require('flipr');
 const FliprYaml = require('flipr-yaml');
 
 const source = new FliprYaml({
-  folderPath: './config',
-  fileName: 'example.yaml',
+  filePath: './config/example.yaml',
 });
 
 const flipr = new Flipr({
