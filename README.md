@@ -184,7 +184,7 @@ isSomeFeatureEnabled:
 ```javascript
 const someMinimumDate = new Date(2005, 1, 1);
 const rule = {
-  type: 'list',
+  type: 'equal',
   input: (input) => {
     return input.user.startDate > someMinimumDate
       && input.user.age >= 18;
