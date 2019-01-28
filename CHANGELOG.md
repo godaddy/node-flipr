@@ -1,4 +1,4 @@
-## v2.0.0 (January 23th, 2019)
+## v2.0.0 (January 28th, 2019)
 
 ### Features & Improvements
 

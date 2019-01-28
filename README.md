@@ -1,5 +1,4 @@
-node-flipr
-============
+# node-flipr
 
 [![NPM](https://nodei.co/npm/flipr.png?downloads=true&stars=true)](https://www.npmjs.org/package/flipr)
 
@@ -7,7 +6,7 @@ node-flipr
 
 Static and dynamic configuration for Node.js applications.
 
-Great for feature flags, authorization, a/b tests, dynamic routing, service discovery, and other things.
+Great for feature flags, authorization, A/B tests, dynamic routing, service discovery, and other things.
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 
