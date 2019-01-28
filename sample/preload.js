@@ -1,11 +1,10 @@
-'use strict';
+const Flipr = require('../lib/flipr');
+const source = require('./sources/preload-source');
 
-var flipr = require('../lib/flipr');
-
-flipr.init({
-  source: require('./config/preload-source')
+const flipr = new Flipr({
+  source,
 });
 
-flipr.preload(function(){
-  console.log('Config has been loaded and cached!');
+flipr.preload().then(() => {
+  console.log('Config has been received and cached!');
 });

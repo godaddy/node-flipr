@@ -1,14 +1,11 @@
-'use strict';
+const Flipr = require('../lib/flipr');
+const source = require('./sources/basic-source');
 
-var flipr = require('../lib/flipr');
-
-flipr.init({
-  source: require('./config/basic-source'),
+const flipr = new Flipr({
+  source,
 });
 
-flipr.getValue('someNestedConfig', function(err, value){
-  if(err)
-    return void console.log(err);
-  console.dir(value);
-});
-
+flipr.getValue('someNestedConfig').then(
+  value => console.log(JSON.stringify(value, null, 2)),
+  err => console.dir(err),
+);

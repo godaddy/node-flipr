@@ -1,20 +1,17 @@
-'use strict';
+const Flipr = require('../lib/flipr');
+const source = require('./sources/feature-flipping-source');
 
-var flipr = require('../lib/flipr');
-
-flipr.init({
-  source: require('./config/feature-flipping-source'),
+const flipr = new Flipr({
+  source,
   rules: [
     {
       type: 'equal',
-      input: function(input){
-        return input.user.userId === '2tm';
-      },
-      property: 'isUserSpecial'
+      input: (input) => input.user.userId === '2tm',
+      property: 'isUserSpecial',
     },
     {
       type: 'list',
-      //You can use strings to access deep properties
+      // You can use strings to access deep properties
       input: 'user.userId',
       property: 'userIds'
     },
@@ -25,13 +22,17 @@ flipr.init({
   ]
 });
 
-var input = { user: { userId: '121212' } };
+const input = {
+  user: {
+    userId: '121212'
+  }
+};
 
-//In feature-flipping.yaml, welcomeMessage is set up with a default
-//value, which will be selected if the userId doesn't match the other
-//values.
-flipr.getValueByRules(input, 'welcomeMessage', function(err, value){
-  if(err)
-    return void console.dir(err);
-  console.log(value);
-});
+// In feature-flipping.yaml, welcomeMessage is set up with a default
+// value, which will be selected if the userId doesn't match the other
+// values.
+flipr.getValue('welcomeMessage', input)
+  .then(
+    value => console.log(value),
+    err => console.dir(err),
+  );

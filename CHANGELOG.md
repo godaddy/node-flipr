@@ -1,3 +1,30 @@
+## v2.0.0 (January 28th, 2019)
+
+### Features & Improvements
+
+- ES6+ Rewrite
+- Now supports async/await
+- Lots of cleanup and prep work for more features
+- `jest` for testing
+- `eslint` for linting
+
+### Breaking Changes
+
+- Default export is now a `Flipr` class
+- async/await replaces callbacks everywhere
+- Removed input validator
+- Removed connect middleware
+- Renamed `getDictionary` and `getDictionaryByRules` to `getConfig`
+- Renamed `getValueByRules` to `getValue`
+- `preload` and `flush` are now `async` and required on all sources
+- `init` replaced with class constructor
+- Removed a lot of unnecessary function parameter validation
+- `getValue` and `getConfig` will return undefined for dynamic config keys if no input is given
+- Removed memoization of getValue and getConfig, just relying on source caching now
+- Drop support for node < v8.3
+- Flipr sources must now support async/await
+- Dropped support for the existing flipr-etcd source, that will need a rewrite.
+
 ## v1.1.0 (April 6, 2015)
 
 Features:

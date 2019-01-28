@@ -1,11 +1,14 @@
-'use strict';
+const Flipr = require('../lib/flipr');
+const source = require('./sources/flushable-source');
 
-var flipr = require('../lib/flipr');
-
-flipr.init({
-  source: require('./config/flushable-source'),
+const flipr = new Flipr({
+  source,
 });
 
-flipr.flush();
+// this is async, you can wait for it to finish
+async function flushExample() {
+  await flipr.flush();
+  console.log(`The next call to flipr will get a fresh config from the source.`);    
+}
 
-console.log('All cached/memoized values have been flushed. The next call to flipr will get a fresh config from the source (assuming the flush is a synchronous action in the source).');
+flushExample().catch();
