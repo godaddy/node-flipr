@@ -41,9 +41,11 @@
     "jest": "^23.6.0"
   },
   "dependencies": {
+    "lodash.includes": "^4.3.0",
     "lodash.isboolean": "^3.0.3",
     "lodash.isfunction": "^3.0.9",
     "lodash.isnumber": "^3.0.3",
+    "lodash.isobject": "^3.0.2",
     "lodash.isstring": "^4.0.1",
     "object-path": "^0.11.4"
   },
@@ -72,7 +74,8 @@
       }
     },
     "roots": [
-      "<rootDir>/lib/"
+      "<rootDir>/lib/",
+      "<rootDir>/test/"
     ],
     "testEnvironment": "node"
   }
