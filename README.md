@@ -294,7 +294,7 @@ isSomeFeatureEnabled:
 
 ### IncludesListAny
 
-The includesListAny rule is like the includesListAll rule, except only one value in the rule property array must match the includes logic.
+The includesListAny rule is like the includesListAll rule, except at least one value in the rule property array must match the includes logic.
 
 ## Other Noteworthy Behavior
 
