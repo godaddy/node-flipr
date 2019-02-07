@@ -1,3 +1,14 @@
+## v2.1.0 (February 7th, 2019)
+
+### Features & Improvements
+
+- Added three new rules: includes, includesListAny, and includesListAll
+- Updated docs and tests
+
+### Bug Fixes
+
+- Fixed a case sensitivity bug in the rules
+
 ## v2.0.0 (January 28th, 2019)
 
 ### Features & Improvements
