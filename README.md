@@ -209,7 +209,7 @@ const rule = {
 
 ### Includes
 
-The includes rule has three distinct behaviors, depending on whether the input is a string, an array, or an object.
+The includes rule has three distinct behaviors, depending on whether the input is a string, an array, or an object. It uses [lodash's `includes` ](https://lodash.com/docs/4.17.11#includes) method internally.
 
 ##### Input is a String
 
