@@ -132,8 +132,14 @@ module.exports = {
 
 Flipr uses rules along with input provided at the time of config retrieval to calculate a single config value from many, i.e. dynamic configuration. Rules are just objects with three properties.
 
-* **type** - `string` - The type of the rule. `equal`, `list`, or `percent`.
-* **input** - `string`, `function` - A string is the [object-path](https://github.com/mariocasciaro/object-path#usage) of the value to use in the rule. A function accepts the input and returns the value to use in the rule. If you decide to use a function for a rule's input property, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.
+* **type** - `string` - The type of the rule. One of the following values.
+    * [equal](#equal)
+    * [list](#list)
+    * [percent](#percent)
+    * [includes](#includes)
+    * [includesListAny](#includesListAny)
+    * [includesListAll](#includesListAll)
+* **input** - `string`, `function` - The input that is provided to the `getValue` and `getConfig` methods is typically something like a user or request context. The `input` property in the rule is the logic to extract data from the provided input that will be used to compare to the values in the config. A string is the [object-path](https://github.com/mariocasciaro/object-path#usage) of the value to use in the rule. A function accepts the input and returns the value to use in the rule. If you decide to use a function for a rule's input property, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.
 * **property** - `string` - The name of the rule property used in the configuration. 
 
 ### Percent
@@ -200,6 +206,95 @@ const rule = {
   property: 'isAdmin'
 };
 ```
+
+### Includes
+
+The includes rule has three distinct behaviors, depending on whether the input is a string, an array, or an object. It uses [lodash's `includes` ](https://lodash.com/docs/4.17.11#includes) method internally.
+
+##### Input is a String
+
+When input is a string, the includes rule will check if the rule property in the config is a substring of the input.
+
+```yaml
+isSomeFeatureEnabled:
+  values:
+    - value: true
+      name: john
+    - value: false
+```
+
+```javascript
+const rule = {
+  type: 'includes',
+  input: input => input,
+  property: 'name',
+};
+...
+flipr.getValue('isSomeFeatureEnabled', 'john'); // true
+flipr.getValue('isSomeFeatureEnabled', 'johnathan'); // true
+```
+
+##### Input is an Array
+
+When input is an array, the includes rule will check if the rule property in the config exists in the input array.
+
+```yaml
+isSomeFeatureEnabled:
+  values:
+    - value: true
+      groups: admins
+    - value: false
+```
+
+```javascript
+const rule = {
+  type: 'includes',
+  input: input => input,
+  property: 'groups',
+};
+...
+flipr.getValue('isSomeFeatureEnabled', ['users', 'admins']); // true
+```
+
+##### Input is an Object
+
+When input is an object, the includes rule will check if the rule property in the config exists as a value in the input object. Note that the includes check is shallow, so only the input's root property values will be compared.
+
+```yaml
+isSomeFeatureEnabled:
+  values:
+    - value: true
+      groups: admins
+    - value: false
+```
+
+```javascript
+const rule = {
+  type: 'includes',
+  input: input => input,
+  property: 'groups',
+};
+...
+flipr.getValue('isSomeFeatureEnabled', { groupA: 'users', groupB: 'admins' }); // true
+```
+
+### IncludesListAll
+
+The includesListAll rule is like the includes rule, in that it has the same three distinct behaviors, depending on whether the input is a string, an array, or an object. However, unlike the includes rules, the rule property in the config must always be an array. And **ALL** values in that array must match the includes logic.
+
+```yaml
+isSomeFeatureEnabled:
+  values:
+    - value: true
+      groups:
+        - admins
+        - superAdmins
+    - value: false
+```
+
+### IncludesListAny
+
+The includesListAny rule is like the includesListAll rule, except at least one value in the rule property array must match the includes logic.
 
 ## Other Noteworthy Behavior
 
