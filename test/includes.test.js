@@ -91,6 +91,21 @@ describe('includes rule', () => {
       const flipr = new Flipr({source,rules});
       expect(await flipr.getValue('someKey', ['as', 'JK'])).toBe(3);
     });
+    it('coerces input array values to strings for comparison', async () => {
+      const source = mockSource([
+        { ruleProp: '34', value: 1 },
+        { ruleProp: 'jk', value: 2 },
+        { value: 3 },
+      ]);
+      const rules = [{
+        type: 'includes',
+        property: 'ruleProp',
+        input: input => input,
+        isCaseSensitive: true,
+      }]
+      const flipr = new Flipr({source,rules});
+      expect(await flipr.getValue('someKey', [34, 'as'])).toBe(1);
+    });
   });
   describe('handles input as object and', () => {
     it('matches config where rule prop exists as a value in input object', async () => {
@@ -135,6 +150,20 @@ describe('includes rule', () => {
       }]
       const flipr = new Flipr({source,rules});
       expect(await flipr.getValue('someKey',  { foo: 'BAR' })).toBe(3);
+    });
+    it('does a shallow check on the input object', async () => {
+      const source = mockSource([
+        { ruleProp: 'ok', value: 1 },
+        { ruleProp: 'bar', value: 2 },
+        { value: 3 },
+      ]);
+      const rules = [{
+        type: 'includes',
+        property: 'ruleProp',
+        input: input => input,
+      }]
+      const flipr = new Flipr({source,rules});
+      expect(await flipr.getValue('someKey', { foo: { nested: 'bar' } })).toBe(3);
     });
   });
 });
