@@ -139,7 +139,7 @@ Flipr uses rules along with input provided at the time of config retrieval to ca
     * [includes](#includes)
     * [includesListAny](#includesListAny)
     * [includesListAll](#includesListAll)
-* **input** - `string`, `function` - A string is the [object-path](https://github.com/mariocasciaro/object-path#usage) of the value to use in the rule. A function accepts the input and returns the value to use in the rule. If you decide to use a function for a rule's input property, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.
+* **input** - `string`, `function` - The input that is provided to the `getValue` and `getConfig` methods is typically something like a user or request context. The `input` property in the rule is the logic to extract data from the provided input that will be used to compare to the values in the config. A string is the [object-path](https://github.com/mariocasciaro/object-path#usage) of the value to use in the rule. A function accepts the input and returns the value to use in the rule. If you decide to use a function for a rule's input property, be aware that that function should be as safe as possible.  If an exception is thrown by the input function, that rule will be silently skipped.
 * **property** - `string` - The name of the rule property used in the configuration. 
 
 ### Percent
@@ -230,8 +230,8 @@ const rule = {
   property: 'name',
 };
 ...
-flipr.getValue(isSomeFeatureEnabled, 'john'); // true
-flipr.getValue(isSomeFeatureEnabled, 'johnathan'); // true
+flipr.getValue('isSomeFeatureEnabled', 'john'); // true
+flipr.getValue('isSomeFeatureEnabled', 'johnathan'); // true
 ```
 
 ##### Input is an Array
@@ -253,12 +253,12 @@ const rule = {
   property: 'groups',
 };
 ...
-flipr.getValue(isSomeFeatureEnabled, ['users', 'admins']); // true
+flipr.getValue('isSomeFeatureEnabled', ['users', 'admins']); // true
 ```
 
 ##### Input is an Object
 
-When input is an object, the includes rule will check if the rule property in the config exists as a value in the input object.
+When input is an object, the includes rule will check if the rule property in the config exists as a value in the input object. Note that the includes check is shallow, so only the input's root property values will be compared.
 
 ```yaml
 isSomeFeatureEnabled:
@@ -275,7 +275,7 @@ const rule = {
   property: 'groups',
 };
 ...
-flipr.getValue(isSomeFeatureEnabled, { groupA: 'users', groupB: 'admins' }); // true
+flipr.getValue('isSomeFeatureEnabled', { groupA: 'users', groupB: 'admins' }); // true
 ```
 
 ### IncludesListAll
