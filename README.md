@@ -10,6 +10,8 @@ Great for feature flags, authorization, A/B tests, dynamic routing, service disc
 
 ![node-flipr](/flipr.png?raw=true "node-flipr")
 
+Checkout out our [blog article](https://www.godaddy.com/engineering/2019/03/06/dynamic-configuration-for-nodejs/) to learn more about why flipr exists.
+
 ## How does it work?
 
 ### Simple static configuration example using a yaml source
