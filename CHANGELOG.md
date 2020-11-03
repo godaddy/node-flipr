@@ -1,3 +1,11 @@
+## v2.2.0 (November 3rd, 2020)
+
+### Features & Improvements
+
+- Added a new rule: pathEqual 
+- Updated docs and tests
+- Updated dependencies
+
 ## v2.1.0 (February 7th, 2019)
 
 ### Features & Improvements

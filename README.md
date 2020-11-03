@@ -136,6 +136,7 @@ Flipr uses rules along with input provided at the time of config retrieval to ca
 
 * **type** - `string` - The type of the rule. One of the following values.
     * [equal](#equal)
+    * [pathEqual](#pathEqual)
     * [list](#list)
     * [percent](#percent)
     * [includes](#includes)
@@ -208,6 +209,39 @@ const rule = {
   property: 'isAdmin'
 };
 ```
+### Path Equal
+
+The pathEqual rule is much like the equal rule, except it expects the rule's config property to be an object, where the key is an [object path](https://github.com/mariocasciaro/object-path) and the value is the value to be compared for equality. The object path will be used to extract a value from the rule input and compare it to the value in the config. This is useful when you're dealing with inputs that are nested objects with dynamic paths. Consider this example:
+
+```yaml
+isSomeFeatureEnabled:
+  values:
+    - value: true
+      accessControlBatch:
+        someFeature.enabled: true
+    - value: false
+```
+
+```javascript
+const input = {
+  batch: {
+    someFeature: {
+      enabled: true,
+      highlighted: false
+    },
+    anotherFeature: {
+      enabled: false
+    }
+  }
+};
+
+const rule = {
+  type: 'pathEqual',
+  input: 'batch',
+  property: 'accessControlBatch'
+};
+```
+
 
 ### Includes
 
