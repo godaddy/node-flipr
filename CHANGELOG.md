@@ -1,3 +1,9 @@
+## v2.2.1 (November 3rd, 2020)
+
+### Bug Fixes
+
+- Added `pathEqual` to valid rule types in `validateRule`
+
 ## v2.2.0 (November 3rd, 2020)
 
 ### Features & Improvements
