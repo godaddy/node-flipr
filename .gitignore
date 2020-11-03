@@ -16,3 +16,4 @@ node_modules
 *.sublime-workspace
 sandbox.js
 .DS_Store
+*.sw[pon]
