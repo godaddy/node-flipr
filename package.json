@@ -47,7 +47,7 @@
     "lodash.isnumber": "^3.0.3",
     "lodash.isobject": "^3.0.2",
     "lodash.isstring": "^4.0.1",
-    "object-path": "^0.11.5"
+    "object-path": "^0.11.8"
   },
   "eslintConfig": {
     "env": {
